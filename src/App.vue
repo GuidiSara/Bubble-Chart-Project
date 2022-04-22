@@ -2,29 +2,49 @@
   <h1>Challenge Bubble</h1>
   <div class="cartesianPlane">
     <div id="svgContainer"></div>
+    <button @click="changeX()">Cambia x</button>
+    <button>Cambia y</button>
   </div>
 </template>
 
 <script>
 import * as d3 from "d3";
+import quantitativeVariablesCircle from "./fileJson/quantitativeVariablesCircle.json";
 export default {
   name: "App",
-  data() {},
+  data: function () {
+    return {
+      circles: "",
+      svg: "",
+    };
+  },
+
   mounted() {
-    const width = 150;
-    const height = 150;
-    let svg1 = d3.select("#svgcontainer").append("svg").attr("width", width).attr("height", height);
-    svg1.append("circle").attr("cx", 100).attr("cy", 100).attr("r", 30).attr("fill", "purple");
-    let svg2 = d3.select("#svgcontainer").append("svg").attr("width", width).attr("height", height);
-    svg2.append("circle").attr("cx", 30).attr("cy", 30).attr("r", 30).attr("fill", "purple");
-    let svg3 = d3.select("#svgcontainer").append("svg").attr("width", width).attr("height", height);
-    svg3.append("circle").attr("cx", 70).attr("cy", 70).attr("r", 30).attr("fill", "purple");
+    this.createdCircles();
+  },
+  methods: {
+    createdCircles() {
+      this.circles = quantitativeVariablesCircle.circles;
+      this.svg = d3.select("#svgContainer").append("svg").attr("width", 8000).attr("height", 800);
+      this.circles.forEach((circle) => {
+        this.svg
+          .append("circle")
+          .attr("cx", circle.v1)
+          .attr("cy", circle.v2)
+          .attr("r", circle.v3)
+          .attr("stroke", "#5e9f4d")
+          .attr("fill", "#b7d2a9");
+      });
+    },
+    changeX() {
+      console.log(this.svg);
+    },
   },
 };
 </script>
 
 <style>
-h1 {
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
