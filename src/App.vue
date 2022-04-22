@@ -10,6 +10,7 @@
 <script>
 import * as d3 from "d3";
 import quantitativeVariablesCircle from "./fileJson/quantitativeVariablesCircle.json";
+
 export default {
   name: "App",
   data: function () {
@@ -26,6 +27,12 @@ export default {
   methods: {
     //created circles
     createdCircles() {
+      let colorScale = d3
+        .scaleOrdinal()
+        .domain([1, 23])
+        .range(["#D5F5E3", "#ABEBC6", "#82E0AA", "#58D68D", "#2ECC71", "#28B463", "#239B56", "#1D8348", "#186A3B"]);
+      let linearScale = d3.scaleLinear().domain([0, 30]).range([0, 800]);
+      let rscale = d3.scaleSqrt().range([0, 60]).domain([0, 10]);
       let dataSet = quantitativeVariablesCircle.circles;
       this.svg = d3.select("svg");
       this.svg
@@ -34,77 +41,116 @@ export default {
         .enter()
         .append("circle")
         .attr("cx", function (d) {
-          return d.v1;
+          return linearScale(d.v1);
         })
         .attr("cy", function (d) {
-          return d.v2;
+          return linearScale(d.v2);
         })
         .attr("r", function (d) {
-          return d.v3;
+          return rscale(d.v3);
         })
-        .attr("stroke", "#5e9f4d")
-        .attr("fill", "#b7d2a9");
+        .attr("fill", (d) => colorScale(rscale(d.v3)))
+        .attr("stroke", "#186A3B")
+        .style("opacity", 0.7);
     },
     changeX() {
-      console.log(this.clickX);
+      let linearScale = d3.scaleLinear().domain([0, 30]).range([0, 800]);
+      let rscale = d3.scaleSqrt().range([0, 60]).domain([0, 10]);
+      let colorScale = d3
+        .scaleOrdinal()
+        .domain([1, 23])
+        .range([
+          "#EAFAF1",
+          "#D5F5E3",
+          "#ABEBC6",
+          "#82E0AA",
+          "#58D68D",
+          "#2ECC71",
+          "#28B463",
+          "#239B56",
+          "#1D8348",
+          "#186A3B",
+        ]);
       if (this.clickX) {
         d3.select("svg")
           .selectAll("circle")
           .attr("cx", function (d) {
-            return d.v1;
+            return linearScale(d.v1);
           })
           .transition()
           .duration(1000)
           .attr("r", function (d) {
-            return d.v3;
+            return rscale(d.v3);
           })
-          .attr("stroke", "#5e9f4d")
-          .attr("fill", "#b7d2a9");
+          .attr("fill", (d) => colorScale(d))
+          .attr("stroke", "#186A3B")
+          .style("opacity", 0.7);
         this.clickX = false;
       } else {
         d3.select("svg")
           .selectAll("circle")
           .attr("cx", function (d) {
-            return d.v3;
+            return linearScale(d.v3);
           })
           .transition()
           .duration(1000)
           .attr("r", function (d) {
-            return d.v1;
+            return rscale(d.v1);
           })
-          .attr("stroke", "#5e9f4d")
-          .attr("fill", "#b7d2a9");
+          .attr("fill", (d) => colorScale(d))
+          .attr("stroke", "#186A3B")
+          .style("opacity", 0.7);
         this.clickX = true;
       }
     },
     changeY() {
+      let colorScale = d3
+        .scaleOrdinal()
+        .domain([1, 23])
+        .range([
+          "#EAFAF1",
+          "#D5F5E3",
+          "#ABEBC6",
+          "#82E0AA",
+          "#58D68D",
+          "#2ECC71",
+          "#28B463",
+          "#239B56",
+          "#1D8348",
+          "#186A3B",
+        ]);
+
+      let rscale = d3.scaleSqrt().range([0, 60]).domain([0, 10]);
+      let linearScale = d3.scaleLinear().domain([0, 30]).range([0, 800]);
       if (this.clickY) {
         d3.select("svg")
           .selectAll("circle")
           .attr("cy", function (d) {
-            return d.v2;
+            return linearScale(d.v2);
           })
           .transition()
           .duration(1000)
           .attr("r", function (d) {
-            return d.v3;
+            return rscale(d.v3);
           })
-          .attr("stroke", "#5e9f4d")
-          .attr("fill", "#b7d2a9");
+          .attr("fill", (d) => colorScale(d))
+          .attr("stroke", "#186A3B")
+          .style("opacity", 0.7);
         this.clickY = false;
       } else {
         d3.select("svg")
           .selectAll("circle")
           .attr("cy", function (d) {
-            return d.v3;
+            return linearScale(d.v3);
           })
           .transition()
           .duration(1000)
           .attr("r", function (d) {
-            return d.v2;
+            return rscale(d.v2);
           })
-          .attr("stroke", "#5e9f4d")
-          .attr("fill", "#b7d2a9");
+          .attr("fill", (d) => colorScale(d))
+          .attr("stroke", "#186A3B")
+          .style("opacity", 0.7);
         this.clickY = true;
       }
     },
