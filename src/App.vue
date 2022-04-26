@@ -1,9 +1,7 @@
 <template>
   <h1>Challenge Bubble</h1>
   <div class="cartesianPlane">
-    <svg width="8000" height="1000"></svg>
-    <button @click="changeX()">Cambia x</button>
-    <button @click="changeY()">Cambia y</button>
+    <svg width="8000" height="1000" id="svg"></svg>
   </div>
 </template>
 
@@ -74,6 +72,44 @@ let correspondingVariables = {
   r: "v3",
 };
 
+const changeX = () => {
+  let x = correspondingVariables.x;
+  correspondingVariables.x = correspondingVariables.r;
+  correspondingVariables.r = x;
+
+  d3.select("svg")
+    .selectAll("circle")
+    .attr("cx", function (d) {
+      return linearScaleX(d[correspondingVariables.x]);
+    })
+    .transition()
+    .duration(1000)
+    .attr("r", function (d) {
+      return rscale(d[correspondingVariables.r]);
+    })
+    .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
+    .attr("stroke", "#186A3B")
+    .style("opacity", 0.7);
+};
+const changeY = () => {
+  let y = correspondingVariables.y;
+  correspondingVariables.y = correspondingVariables.r;
+  correspondingVariables.r = y;
+  d3.select("svg")
+    .selectAll("circle")
+    .attr("cy", function (d) {
+      return linearScaleY(d[correspondingVariables.y]);
+    })
+    .transition()
+    .duration(1000)
+    .attr("r", function (d) {
+      return rscale(d[correspondingVariables.r]);
+    })
+    .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
+    .attr("stroke", "#186A3B")
+    .style("opacity", 0.7);
+};
+
 export default {
   name: "App",
   data: function () {
@@ -107,45 +143,26 @@ export default {
         .attr("stroke", "#186A3B")
         .style("opacity", 0.7);
 
-      this.svg.append("g").attr("transform", "translate(20,800)").call(x_axis);
-      this.svg.append("g").attr("transform", "translate(20,0)").call(y_axis);
+      this.createdAxis();
     },
-    changeX() {
-      let x = correspondingVariables.x;
-      correspondingVariables.x = correspondingVariables.r;
-      correspondingVariables.r = x;
 
-      d3.select("svg")
-        .selectAll("circle")
-        .attr("cx", function (d) {
-          return linearScaleX(d[correspondingVariables.x]);
+    createdAxis() {
+      this.svg
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", "translate(20,800)")
+        .on("click", function () {
+          changeX();
         })
-        .transition()
-        .duration(1000)
-        .attr("r", function (d) {
-          return rscale(d[correspondingVariables.r]);
+        .call(x_axis);
+      this.svg
+        .append("g")
+        .attr("class", "y-axis")
+        .attr("transform", "translate(20,0)")
+        .on("click", function () {
+          changeY();
         })
-        .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-        .attr("stroke", "#186A3B")
-        .style("opacity", 0.7);
-    },
-    changeY() {
-      let y = correspondingVariables.y;
-      correspondingVariables.y = correspondingVariables.r;
-      correspondingVariables.r = y;
-      d3.select("svg")
-        .selectAll("circle")
-        .attr("cy", function (d) {
-          return linearScaleY(d[correspondingVariables.y]);
-        })
-        .transition()
-        .duration(1000)
-        .attr("r", function (d) {
-          return rscale(d[correspondingVariables.r]);
-        })
-        .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-        .attr("stroke", "#186A3B")
-        .style("opacity", 0.7);
+        .call(y_axis);
     },
   },
 };
@@ -153,12 +170,23 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Arial, Helvetica, sans-serif;
   text-align: center;
-  color: red;
   margin-top: 60px;
-  margin-bottom: 100px !important;
+}
+h1 {
+  color: #145a32;
+  font-size: 2.5em;
+}
+
+.x-axis line,
+.x-axis path,
+.x-axis text,
+.y-axis line,
+.y-axis path,
+.y-axis text {
+  stroke: black;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
 }
 </style>
