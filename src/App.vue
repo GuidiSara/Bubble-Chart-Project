@@ -1,7 +1,7 @@
 <template>
   <h1>Challenge Bubble</h1>
   <div class="cartesianPlane">
-    <svg width="8000" height="1000" id="svg"></svg>
+    <svg id="svg"></svg>
   </div>
 </template>
 
@@ -49,8 +49,8 @@ const maxValue = (variable) => {
 };
 const colorScale = d3
   .scaleOrdinal()
-  .domain([1, 23])
-  .range(["#145A32", "#196F3D", "#1E8449", "#229954", "#27AE60", "#52BE80", "#7DCEA0 ", "#A9DFBF"]);
+  .domain([1, maxValue("r")])
+  .range(["#3D5C5C", "#366363", "#2E6B6B", "#267373", "#1F7A7A", "#178282", "#0F8A8A", "#089191 ", "#009999"]);
 const linearScaleX = d3
   .scaleLinear()
   .domain([0, maxValue("x")])
@@ -73,22 +73,25 @@ let correspondingVariables = {
 };
 
 const changeX = () => {
+  let r = correspondingVariables.r;
   let x = correspondingVariables.x;
   correspondingVariables.x = correspondingVariables.r;
   correspondingVariables.r = x;
 
   d3.select("svg")
     .selectAll("circle")
+    .transition()
+    .duration(2000)
     .attr("cx", function (d) {
       return linearScaleX(d[correspondingVariables.x]);
     })
-    .transition()
-    .duration(1000)
+    .attr("transform", "translate(" + r + ", 0)")
+
     .attr("r", function (d) {
       return rscale(d[correspondingVariables.r]);
     })
     .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-    .attr("stroke", "#186A3B")
+    .attr("stroke", "#A8C2A3")
     .style("opacity", 0.7);
 };
 const changeY = () => {
@@ -97,16 +100,16 @@ const changeY = () => {
   correspondingVariables.r = y;
   d3.select("svg")
     .selectAll("circle")
+    .transition()
+    .duration(2000)
     .attr("cy", function (d) {
       return linearScaleY(d[correspondingVariables.y]);
     })
-    .transition()
-    .duration(1000)
     .attr("r", function (d) {
       return rscale(d[correspondingVariables.r]);
     })
     .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-    .attr("stroke", "#186A3B")
+    .attr("stroke", "#A8C2A3")
     .style("opacity", 0.7);
 };
 
@@ -140,7 +143,7 @@ export default {
           return rscale(d.v3);
         })
         .attr("fill", (d) => colorScale(d.v3))
-        .attr("stroke", "#186A3B")
+        .attr("stroke", "#A8C2A3")
         .style("opacity", 0.7);
 
       this.createdAxis();
@@ -175,10 +178,19 @@ export default {
   margin-top: 60px;
 }
 h1 {
-  color: #145a32;
+  color: #1686fe;
   font-size: 2.5em;
+  opacity: 0.7;
 }
 
+.cartesianPlane {
+  display: flex;
+  justify-content: center;
+}
+svg {
+  width: 800px;
+  height: 1000px;
+}
 .x-axis line,
 .x-axis path,
 .x-axis text,
