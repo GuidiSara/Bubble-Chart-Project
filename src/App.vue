@@ -1,117 +1,80 @@
 <template>
   <h1>Challenge Bubble</h1>
   <div class="cartesianPlane">
-    <svg id="svg"></svg>
+    <svg id="svg">
+      <defs>
+        <radialGradient id="gradient">
+          <stop offset="0%" stop-color="rgba(32,171,177,1)" />
+          <stop offset="59%" stop-color="rgba(23,152,157,1" />
+          <stop offset="88%" stop-color="rgba(16,131,136,1)" />
+        </radialGradient>
+      </defs>
+    </svg>
   </div>
 </template>
 
 <script>
 import * as d3 from "d3";
 import quantitativeVariablesCircle from "./fileJson/quantitativeVariablesCircle.json";
-
-const maxValue = (variable) => {
-  let circles = quantitativeVariablesCircle.circles;
-  let max;
-  if (variable === "x") {
-    max = Math.max(
-      ...circles.map((c) => {
-        return c.v1;
-      })
-    );
-    max = Math.max(
-      ...circles.map((c) => {
-        return c.v1;
-      })
-    );
-    let objectWithXMax = circles.find((c) => {
-      return c.v1 === max;
-    });
-    max = max + objectWithXMax.v3 / 2;
-  } else if (variable === "y") {
-    max = Math.max(
-      ...circles.map((c) => {
-        return c.v2;
-      })
-    );
-    let objectWithYMax = circles.find((c) => {
-      return c.v2 === max;
-    });
-    max = max + objectWithYMax.v3 / 2;
-  } else if (variable === "r") {
-    max = Math.max(
-      ...circles.map((c) => {
-        return c.v3;
-      })
-    );
-  }
-
-  return max;
-};
-const colorScale = d3
-  .scaleOrdinal()
-  .domain([1, maxValue("r")])
-  .range(["#3D5C5C", "#366363", "#2E6B6B", "#267373", "#1F7A7A", "#178282", "#0F8A8A", "#089191 ", "#009999"]);
-const linearScaleX = d3
-  .scaleLinear()
-  .domain([0, maxValue("x")])
-  .range([0, 800]);
-const linearScaleY = d3
-  .scaleLinear()
-  .domain([maxValue("y"), 0])
-  .range([0, 800]);
-const rscale = d3
-  .scaleSqrt()
-  .range([0, 60])
-  .domain([0, maxValue("r")]);
-const x_axis = d3.axisBottom(linearScaleX);
-const y_axis = d3.axisLeft(linearScaleY);
-
 let correspondingVariables = {
   x: "v1",
   y: "v2",
   r: "v3",
 };
+// const maxValue = (variable) => {
+//   let circles = quantitativeVariablesCircle.circles;
+//   let max;
+//   let x = correspondingVariables.x;
+//   let y = correspondingVariables.y;
+//   let r = correspondingVariables.r;
 
-const changeX = () => {
-  let r = correspondingVariables.r;
-  let x = correspondingVariables.x;
-  correspondingVariables.x = correspondingVariables.r;
-  correspondingVariables.r = x;
+//   if (variable === "x") {
+//     max = Math.max(
+//       ...circles.map((c) => {
+//         return c[x];
+//       })
+//     );
 
-  d3.select("svg")
-    .selectAll("circle")
-    .transition()
-    .duration(2000)
-    .attr("cx", function (d) {
-      return linearScaleX(d[correspondingVariables.x]);
-    })
-    .attr("transform", "translate(" + r + ", 0)")
+//     let objectWithXMax = circles.find((c) => {
+//       return c.v1 === max;
+//     });
+//     max = max + objectWithXMax.v3 / 2;
+//   } else if (variable === "y") {
+//     max = Math.max(
+//       ...circles.map((c) => {
+//         return c[y];
+//       })
+//     );
+//     let objectWithYMax = circles.find((c) => {
+//       return c[y] === max;
+//     });
+//     console.log({ y, max, objectWithYMax });
+//     // max = max - objectWithYMax[r];
+//   } else if (variable === "r") {
+//     max = Math.max(
+//       ...circles.map((c) => {
+//         return c[r];
+//       })
+//     );
+//   }
 
-    .attr("r", function (d) {
-      return rscale(d[correspondingVariables.r]);
-    })
-    .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-    .attr("stroke", "#A8C2A3")
-    .style("opacity", 0.7);
-};
-const changeY = () => {
-  let y = correspondingVariables.y;
-  correspondingVariables.y = correspondingVariables.r;
-  correspondingVariables.r = y;
-  d3.select("svg")
-    .selectAll("circle")
-    .transition()
-    .duration(2000)
-    .attr("cy", function (d) {
-      return linearScaleY(d[correspondingVariables.y]);
-    })
-    .attr("r", function (d) {
-      return rscale(d[correspondingVariables.r]);
-    })
-    .attr("fill", (d) => colorScale(d[correspondingVariables.r]))
-    .attr("stroke", "#A8C2A3")
-    .style("opacity", 0.7);
-};
+//   return max;
+// };
+
+// const linearScaleX = d3
+//   .scaleLinear()
+//   .domain([0, maxValue("x")])
+//   .range([0, 800]);
+// const linearScaleY = d3
+//   .scaleLinear()
+//   .domain([maxValue("y"), 0])
+//   .range([0, 800]);
+// const rscale = d3
+//   .scaleSqrt()
+//   .range([0, 60])
+//   .domain([0, maxValue("r")]);
+// const x_axis = d3.axisBottom(linearScaleX);
+// const y_axis = d3.axisLeft(linearScaleY);
 
 export default {
   name: "App",
@@ -122,11 +85,67 @@ export default {
   },
 
   mounted() {
-    this.createdCircles();
+    this.createCircles();
   },
   methods: {
-    createdCircles() {
+    maxValue(variable) {
+      let circles = quantitativeVariablesCircle.circles;
+      let max;
+      let x = correspondingVariables.x;
+      let y = correspondingVariables.y;
+      let r = correspondingVariables.r;
+
+      if (variable === "x") {
+        max = Math.max(
+          ...circles.map((c) => {
+            return c[x];
+          })
+        );
+
+        let objectWithXMax = circles.find((c) => {
+          return c.v1 === max;
+        });
+        max = max + objectWithXMax.v3 / 2;
+      } else if (variable === "y") {
+        max = Math.max(
+          ...circles.map((c) => {
+            return c[y];
+          })
+        );
+        let objectWithYMax = circles.find((c) => {
+          return c[y] === max;
+        });
+        console.log({ y, max, objectWithYMax });
+        // const { scaleY } = this.getScales();
+        max = max + 5;
+        console.log(max);
+      } else if (variable === "r") {
+        max = Math.max(
+          ...circles.map((c) => {
+            return c[r];
+          })
+        );
+      }
+      return max;
+    },
+    getScales() {
+      const linearScaleX = d3
+        .scaleLinear()
+        .domain([0, this.maxValue("x")])
+        .range([0, 800]);
+      const linearScaleY = d3
+        .scaleLinear()
+        .domain([this.maxValue("y"), 0])
+        .range([0, 800]);
+      const rscale = d3
+        .scaleSqrt()
+        .range([0, 60])
+        .domain([0, this.maxValue("r")]);
+      return { scaleX: linearScaleX, scaleY: linearScaleY, scaleR: rscale };
+    },
+    createCircles() {
       let dataSet = quantitativeVariablesCircle.circles;
+      const { scaleX, scaleY, scaleR } = this.getScales();
       this.svg = d3.select("svg");
       this.svg
         .selectAll("circle")
@@ -134,38 +153,82 @@ export default {
         .enter()
         .append("circle")
         .attr("cx", function (d) {
-          return linearScaleX(d.v1);
+          return scaleX(d.v1);
         })
         .attr("cy", function (d) {
-          return linearScaleY(d.v2);
+          return scaleY(d.v2);
         })
         .attr("r", function (d) {
-          return rscale(d.v3);
+          return scaleR(d.v3);
         })
-        .attr("fill", (d) => colorScale(d.v3))
-        .attr("stroke", "#A8C2A3")
+        .attr("stroke", "#0c7378")
+        .attr("fill", "url(#gradient)")
         .style("opacity", 0.7);
 
-      this.createdAxis();
+      this.createAxis();
+    },
+    changeX() {
+      let x = correspondingVariables.x;
+      const { scaleX, scaleR } = this.getScales();
+      correspondingVariables.x = correspondingVariables.r;
+      correspondingVariables.r = x;
+      d3.select("svg")
+        .selectAll("circle")
+        .transition()
+        .duration(2000)
+        .attr("cx", function (d) {
+          return scaleX(d[correspondingVariables.x]);
+        })
+        .attr("r", function (d) {
+          return scaleR(d[correspondingVariables.r]);
+        });
     },
 
-    createdAxis() {
+    changeY() {
+      let y = correspondingVariables.y;
+      correspondingVariables.y = correspondingVariables.r;
+      correspondingVariables.r = y;
+      const { scaleY, scaleR } = this.getScales();
+      d3.select("svg")
+        .selectAll("circle")
+        .transition()
+        .duration(2000)
+        .attr("cy", function (d) {
+          return scaleY(d[correspondingVariables.y]);
+        })
+        .attr("r", function (d) {
+          return scaleR(d[correspondingVariables.r]);
+        });
+
+      this.deleteAxis();
+      this.createAxis();
+    },
+
+    createAxis() {
+      const { scaleX, scaleY } = this.getScales();
+      const x_axis = d3.axisBottom(scaleX);
+      const y_axis = d3.axisLeft(scaleY);
+
       this.svg
         .append("g")
         .attr("class", "x-axis")
         .attr("transform", "translate(20,800)")
-        .on("click", function () {
-          changeX();
+        .on("click", () => {
+          this.changeX();
         })
         .call(x_axis);
       this.svg
         .append("g")
         .attr("class", "y-axis")
         .attr("transform", "translate(20,0)")
-        .on("click", function () {
-          changeY();
+        .on("click", () => {
+          this.changeY();
         })
         .call(y_axis);
+    },
+
+    deleteAxis() {
+      this.svg.selectAll("g").remove();
     },
   },
 };
@@ -178,7 +241,7 @@ export default {
   margin-top: 60px;
 }
 h1 {
-  color: #1686fe;
+  color: #089191;
   font-size: 2.5em;
   opacity: 0.7;
 }
@@ -189,7 +252,7 @@ h1 {
 }
 svg {
   width: 800px;
-  height: 1000px;
+  height: 800px;
 }
 .x-axis line,
 .x-axis path,
