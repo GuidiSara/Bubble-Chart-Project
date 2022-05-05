@@ -21,60 +21,6 @@ let correspondingVariables = {
   y: "v2",
   r: "v3",
 };
-// const maxValue = (variable) => {
-//   let circles = quantitativeVariablesCircle.circles;
-//   let max;
-//   let x = correspondingVariables.x;
-//   let y = correspondingVariables.y;
-//   let r = correspondingVariables.r;
-
-//   if (variable === "x") {
-//     max = Math.max(
-//       ...circles.map((c) => {
-//         return c[x];
-//       })
-//     );
-
-//     let objectWithXMax = circles.find((c) => {
-//       return c.v1 === max;
-//     });
-//     max = max + objectWithXMax.v3 / 2;
-//   } else if (variable === "y") {
-//     max = Math.max(
-//       ...circles.map((c) => {
-//         return c[y];
-//       })
-//     );
-//     let objectWithYMax = circles.find((c) => {
-//       return c[y] === max;
-//     });
-//     console.log({ y, max, objectWithYMax });
-//     // max = max - objectWithYMax[r];
-//   } else if (variable === "r") {
-//     max = Math.max(
-//       ...circles.map((c) => {
-//         return c[r];
-//       })
-//     );
-//   }
-
-//   return max;
-// };
-
-// const linearScaleX = d3
-//   .scaleLinear()
-//   .domain([0, maxValue("x")])
-//   .range([0, 800]);
-// const linearScaleY = d3
-//   .scaleLinear()
-//   .domain([maxValue("y"), 0])
-//   .range([0, 800]);
-// const rscale = d3
-//   .scaleSqrt()
-//   .range([0, 60])
-//   .domain([0, maxValue("r")]);
-// const x_axis = d3.axisBottom(linearScaleX);
-// const y_axis = d3.axisLeft(linearScaleY);
 
 export default {
   name: "App",
@@ -101,11 +47,10 @@ export default {
             return c[x];
           })
         );
-
         let objectWithXMax = circles.find((c) => {
-          return c.v1 === max;
+          return c[x] === max;
         });
-        max = max + objectWithXMax.v3 / 2;
+        max = max + objectWithXMax[r] / 2;
       } else if (variable === "y") {
         max = Math.max(
           ...circles.map((c) => {
@@ -115,10 +60,8 @@ export default {
         let objectWithYMax = circles.find((c) => {
           return c[y] === max;
         });
-        console.log({ y, max, objectWithYMax });
-        // const { scaleY } = this.getScales();
-        max = max + 5;
-        console.log(max);
+
+        max = max + objectWithYMax[r];
       } else if (variable === "r") {
         max = Math.max(
           ...circles.map((c) => {
@@ -182,6 +125,9 @@ export default {
         .attr("r", function (d) {
           return scaleR(d[correspondingVariables.r]);
         });
+
+      this.deleteAxis();
+      this.createAxis();
     },
 
     changeY() {
@@ -252,7 +198,7 @@ h1 {
 }
 svg {
   width: 800px;
-  height: 800px;
+  height: 830px;
 }
 .x-axis line,
 .x-axis path,
