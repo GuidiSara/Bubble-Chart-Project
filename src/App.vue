@@ -50,7 +50,7 @@ export default {
         let objectWithXMax = circles.find((c) => {
           return c[x] === max;
         });
-        max = max + objectWithXMax[r] / 2;
+        max = max + objectWithXMax[r];
       } else if (variable === "y") {
         max = Math.max(
           ...circles.map((c) => {
